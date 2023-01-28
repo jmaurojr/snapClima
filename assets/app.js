@@ -24,9 +24,7 @@ navigator.geolocation.getCurrentPosition(
     let lat = position.coords.latitude;
     let lon = position.coords.longitude;
 
-    getCurrentLocationWeather(lat, lon)
-      .then((response) => response.json())
-      .then((data) => displayWeather(data));
+    getCurrentLocationWeather(lat, lon);
   },
   (err) => {
     if (err.code === 1) {
@@ -39,10 +37,12 @@ navigator.geolocation.getCurrentPosition(
   }
 );
 
-function getCurrentLocationWeather() {
+function getCurrentLocationWeather(lat, lon) {
   fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=pt_br&appid=${api_key}`
-  );
+  )
+    .then((response) => response.json())
+    .then((data) => displayWeather(data));
 }
 
 function getCityWeather(cityName) {
@@ -72,13 +72,13 @@ function displayWeather(data) {
   windSpeed.textContent = `${Math.round(speed * 3.6)}Km/h`;
   feelsLikeTemperature.textContent = `${Math.round(feels_like)}ºC`;
   currentHumidity.textContent = `${humidity}%`;
-  sunriseTime.textContent = sunrise;
-  sunsetTime.textContent = sunset;
+  sunriseTime.textContent = formatTime(sunrise);
+  sunsetTime.textContent = formatTime(sunset);
 }
 
 function formatDate(epochTime) {
   let date = new Date(epochTime * 1000);
-  let fomattedDate = date.toLocalDateString("pt-BR", {
+  let formattedDate = date.toLocaleDateString("pt-BR", {
     month: "long",
     day: "numeric",
   });
